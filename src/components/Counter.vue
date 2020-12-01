@@ -1,18 +1,21 @@
 <template>
-    <main class="container" v-if="loaded">
-        <div>
+    <main class="countdown-wrapper">
+        <div class="value-wrapper">
             <p>{{displayDays}}</p>
             <p>Days</p>
         </div>
-        <div>
+        <p class="seperator">:</p>
+        <div class="value-wrapper">
             <p>{{displayHours}}</p>
             <p>Hours</p>
         </div>
-        <div>
+        <p class="seperator">:</p>
+        <div class="value-wrapper">
             <p>{{displayMinutes}}</p>
             <p>Minutes</p>
         </div>
-        <div>
+        <p class="seperator">:</p>
+        <div class="value-wrapper">
             <p>{{displaySeconds}}</p>
             <p>Seconds</p>
         </div>
@@ -27,8 +30,8 @@
             displayHours: 0,
             displayMinutes:0,
             displaySeconds:0,
-            loaded: false,
             expired: false,
+            timer: null
         }),
         computed: {
             _seconds:() => 1000,
@@ -54,30 +57,41 @@
             }
         },
         methods: {
-            showRemaining() {
-                const timer = setInterval(()=> {
-                    const now = new Date();
-                    const distance = this.end.getTime() - now.getTime();
+            setRemaining() {
+                const now = new Date();
+                const distance = this.end.getTime() - now.getTime();
 
-                    if (distance < 0) {
-                        clearInterval(timer);
-                        // countdown complete
-                        this.expired = true;
-                        this.loaded = true;
-                        return;
+                if (distance < 0) {
+                    if (this.timer !== null) {
+                        clearInterval(this.timer); 
                     }
+                    // countdown complete
+                    this.expired = true;
+                    return;
+                }
 
-                    const days = Math.floor((distance / this._days));
-                    const hours = Math.floor((distance % this._days)/ this._hours);
-                    const minutes = Math.floor((distance % this._hours)/ this._minutes);
-                    const seconds = Math.floor((distance % this._minutes)/ this._seconds);
+                const days = Math.floor((distance / this._days));
+                const hours = Math.floor((distance % this._days)/ this._hours);
+                const minutes = Math.floor((distance % this._hours)/ this._minutes);
+                const seconds = Math.floor((distance % this._minutes)/ this._seconds);
 
-                    this.displayDays = this.formatNum(days);
-                    this.displayHours = this.formatNum(hours);
-                    this.displayMinutes = this.formatNum(minutes);
-                    this.displaySeconds = this.formatNum(seconds);
-                    this.loaded = true;
+                this.displayDays = this.formatNum(days);
+                this.displayHours = this.formatNum(hours);
+                this.displayMinutes = this.formatNum(minutes);
+                this.displaySeconds = this.formatNum(seconds);
+            },
+            showRemaining() {
+                // sets on mount to show instantly
+                this.setRemaining();
+                
+                // only starts the interval if the countdown has not expired
+                if (this.expired) {
+                    return;
+                }
 
+                // recaculates every second
+                this.timer = setInterval(()=> {
+                    this.setRemaining();
                 }, 1000)
             },
             formatNum(num) {
@@ -92,15 +106,32 @@
 
 <style lang="scss" scoped>
 p {
-    font-family: Arial, Helvetica, sans-serif;
-    font-size: 16px;
+    font-size: 20px;
+    color: white;
+    letter-spacing: 1px;
+    margin: 0 0 0.5rem 0;
 }
 
-.container {
+.countdown-wrapper {
     display: flex;
     flex-flow: row nowrap;
     gap: 10px;
     justify-content: center;
     text-align: center;
-}
+    background: rgb(63, 81, 181);
+    width: 480px;
+    margin: 16px auto;
+    border-radius: 10px;
+    padding: 35px 0 30px;
+    box-sizing: border-box;
+    }
+
+.value-wrapper p:first-child,
+ .seperator 
+    {
+        font-size: 36px;
+        font-weight: bold;
+    }
+
+
 </style>
