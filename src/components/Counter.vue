@@ -1,5 +1,5 @@
 <template>
-    <main class="countdown-wrapper" >
+    <div class="countdown-wrapper" >
         <div class="counter" v-if="!expired">
             <div class="days-remaining">
                 <p><span>{{displayDays}}</span> Days</p>
@@ -15,19 +15,13 @@
         <div class="date" v-if="finalDate">
             <p><i>until</i> {{ finalDate }}</p>
         </div>
-    </main>
+    </div>
 </template>
 
 <script>
     export default {
         props: {
-            year: Number,
-            month: Number,
-            date: Number,
-            hour: Number,
-            minute: Number,
-            second: Number,
-            ms: Number,
+            dateObj: Object,
         },
         data: () => ({
             displayDays: 0,
@@ -51,13 +45,13 @@
             },
             end() {
                 return new Date(
-                    this.year, 
-                    this.month, 
-                    this.date, 
-                    this.hour, 
-                    this.minute, 
-                    this.second, 
-                    this.ms
+                    this.dateObj.year, 
+                    this.dateObj.month, 
+                    this.dateObj.date, 
+                    this.dateObj.hour, 
+                    this.dateObj.minute, 
+                    this.dateObj.second, 
+                    this.dateObj.ms
                     )
             }
         },
