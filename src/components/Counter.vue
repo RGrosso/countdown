@@ -1,37 +1,42 @@
 <template>
-    <main class="countdown-wrapper">
-        <div class="value-wrapper">
-            <p>{{displayDays}}</p>
-            <p>Days</p>
+    <main class="countdown-wrapper" >
+        <div class="counter" v-if="!expired">
+            <div class="days-remaining">
+                <p><span>{{displayDays}}</span> Days</p>
+            </div>
+            <div class="value-wrapper">
+                <p>{{displayHours}}:{{displayMinutes}}:{{displaySeconds}}</p>
+            </div>
+        
         </div>
-        <p class="seperator">:</p>
-        <div class="value-wrapper">
-            <p>{{displayHours}}</p>
-            <p>Hours</p>
+        <div class="expired" v-else>
+            <p>EXPIRED</p>
         </div>
-        <p class="seperator">:</p>
-        <div class="value-wrapper">
-            <p>{{displayMinutes}}</p>
-            <p>Minutes</p>
-        </div>
-        <p class="seperator">:</p>
-        <div class="value-wrapper">
-            <p>{{displaySeconds}}</p>
-            <p>Seconds</p>
+        <div class="date" v-if="finalDate">
+            <p><i>until</i> {{ finalDate }}</p>
         </div>
     </main>
 </template>
 
 <script>
     export default {
-        props: ["year", "month", "date", "hour", "minute", "second", "ms"],
+        props: {
+            year: Number,
+            month: Number,
+            date: Number,
+            hour: Number,
+            minute: Number,
+            second: Number,
+            ms: Number,
+        },
         data: () => ({
             displayDays: 0,
             displayHours: 0,
             displayMinutes:0,
             displaySeconds:0,
             expired: false,
-            timer: null
+            timer: null,
+            finalDate: null
         }),
         computed: {
             _seconds:() => 1000,
@@ -99,7 +104,16 @@
             }
         },
         mounted() {
-            this.showRemaining()
+            this.showRemaining();
+            const end = this.end;
+            this.finalDate = end.toLocaleString("en-GB", {
+                day: "numeric",
+                month: "short",
+                year: "numeric",
+                hour: "numeric",
+                minute: "2-digit"
+            });
+
         }
     }
 </script>
@@ -114,24 +128,36 @@ p {
 
 .countdown-wrapper {
     display: flex;
-    flex-flow: row nowrap;
-    gap: 10px;
     justify-content: center;
     text-align: center;
+    flex-flow: column;
     background: rgb(63, 81, 181);
     width: 480px;
     margin: 16px auto;
     border-radius: 10px;
     padding: 35px 0 30px;
     box-sizing: border-box;
-    }
+}
 
-.value-wrapper p:first-child,
- .seperator 
-    {
+.countdown-wrapper > div {
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: center;
+    align-items: center;
+}
+
+.counter {
+    gap: 10px;
+}
+
+.value-wrapper ,
+.days-remaining,
+.expired {
+    p {
         font-size: 36px;
         font-weight: bold;
     }
+}
 
 
 </style>

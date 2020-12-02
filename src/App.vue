@@ -19,6 +19,15 @@
     :second="0"
     :ms="0"
     />
+     <Counter 
+    :year="2020"
+    :month="10"
+    :date="25"
+    :hour="23"
+    :minute="0"
+    :second="0"
+    :ms="0"
+    />
   </div>
 </template>
 
